@@ -53,6 +53,49 @@ df=pd.read_csv('train_u6lujuX_CVtuZ9i.csv')
      # Read test file
 testdf=pd.read_csv('test_Y3wMUE5_7gLdaTN.csv')
 
+# Let's Know more about data by using data visualisation technique
+# This is count of na values
+df.isna().sum()
+
+
+
+# overview of data
+df.describe()
+
+
+# understand the columns and datatypes
+df.dtypes
+
+
+
+# Box Plot for understanding the distributions and to observe the outliers.
+
+%matplotlib inline
+
+# Histogram of variable ApplicantIncome
+
+df['ApplicantIncome'].hist()
+
+
+
+%matplotlib inline
+
+# Histogram of variable ApplicantIncome
+
+df['Self_Employed'].hist()
+
+
+
+# Box Plot for variable ApplicantIncome of training data set
+
+df.boxplot(column='ApplicantIncome')
+
+
+# Box Plot for variable ApplicantIncome by variable Education of training data set
+
+df.boxplot(column='ApplicantIncome', by = 'Education')
+
+
      # Impute missing data in train file with mean values
 df['LoanAmount'].fillna(df['LoanAmount'].mean(), inplace=True)
 df['Self_Employed'].fillna('No', inplace=True)
@@ -118,4 +161,82 @@ df_final=testdf.drop(['Gender', 'Married', 'Dependents', 'Education', 'Self_Empl
 
 df_final['Loan_Status']=df_final['Loan_Status'].map({0:'N', 1:'Y'})
 df_final.to_csv('sample_submission.csv', index=False)
+
+
+
+# RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier
+outcome_var = 'Loan_Status'
+model = RandomForestClassifier(n_estimators=100, 
+                               bootstrap = True,
+                               max_features = 'sqrt')
+predictor_var = ['Credit_History','Education','Married','Self_Employed','Property_Area']
+p=classification_model(model, df,testdf,predictor_var,outcome_var)
+testdf['Loan_Status']=p
+df_final=testdf.drop(['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'ApplicantIncome', 'CoapplicantIncome', 'LoanAmount',
+                      'Loan_Amount_Term', 'Credit_History', 'Property_Area','TotalIncome','TotalIncome_log'],axis=1)
+
+df_final['Loan_Status']=df_final['Loan_Status'].map({0:'N', 1:'Y'})
+df_final.to_csv('sample_submission_RF.csv', index=False)
+
+
+
+
+# DecisionTreeClassifier
+
+from sklearn.tree import DecisionTreeClassifier
+
+outcome_var = 'Loan_Status'
+model = DecisionTreeClassifier()
+predictor_var = ['Credit_History','Education','Married','Self_Employed','Property_Area']
+p=classification_model(model, df,testdf,predictor_var,outcome_var)
+testdf['Loan_Status']=p
+df_final=testdf.drop(['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'ApplicantIncome', 'CoapplicantIncome', 'LoanAmount',
+                      'Loan_Amount_Term', 'Credit_History', 'Property_Area','TotalIncome','TotalIncome_log'],axis=1)
+
+df_final['Loan_Status']=df_final['Loan_Status'].map({0:'N', 1:'Y'})
+df_final.to_csv('sample_submission_DT.csv', index=False)
+
+
+
+#Import Gaussian Naive Bayes model
+from sklearn.naive_bayes import GaussianNB
+
+#Create a Gaussian Classifier
+
+
+outcome_var = 'Loan_Status'
+model = GaussianNB()
+predictor_var = ['Credit_History','Education','Married','Self_Employed','Property_Area']
+p=classification_model(model, df,testdf,predictor_var,outcome_var)
+testdf['Loan_Status']=p
+df_final=testdf.drop(['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'ApplicantIncome', 'CoapplicantIncome', 'LoanAmount',
+                      'Loan_Amount_Term', 'Credit_History', 'Property_Area','TotalIncome','TotalIncome_log'],axis=1)
+
+df_final['Loan_Status']=df_final['Loan_Status'].map({0:'N', 1:'Y'})
+df_final.to_csv('sample_submission_GNB.csv', index=False)
+
+
+
+# gradientboost
+from sklearn.ensemble import GradientBoostingClassifier
+outcome_var = 'Loan_Status'
+model = GradientBoostingClassifier(learning_rate=0.1,n_estimators = 10, random_state = 42)
+predictor_var = ['Credit_History','Education','Married','Self_Employed','Property_Area']
+p=classification_model(model, df,testdf,predictor_var,outcome_var)
+testdf['Loan_Status']=p
+df_final=testdf.drop(['Gender', 'Married', 'Dependents', 'Education', 'Self_Employed', 'ApplicantIncome', 'CoapplicantIncome', 'LoanAmount',
+                      'Loan_Amount_Term', 'Credit_History', 'Property_Area','TotalIncome','TotalIncome_log'],axis=1)
+
+df_final['Loan_Status']=df_final['Loan_Status'].map({0:'N', 1:'Y'})
+df_final.to_csv('sample_submission_GB.csv', index=False)
+
+
+
+# Depending on result we will select model...
+# Thanking you
+
+
+
+
 
